@@ -3,14 +3,21 @@ package com.techelevator.application;
 import com.techelevator.ui.UserInput;
 import com.techelevator.ui.UserOutput;
 
-public class VendingMachine 
-{
+public class VendingMachine {
+    private UserOutput userOutput;
+    private UserInput userInput;
+
+    public VendingMachine(){
+        this.userInput = new UserInput();
+        this.userOutput = new UserOutput();
+    }
+
     public void run()
     {
         while(true)
         {
-            UserOutput.displayHomeScreen();
-            String choice = UserInput.getHomeScreenOption();
+            userOutput.displayHomeScreen();
+            String choice = userInput.getHomeScreenOption();
 
             if(choice.equals("display"))
             {

@@ -13,14 +13,14 @@ import java.util.Map;
 public class UserOutput
 {
 
-    public static void displayMessage(String message)
+    public void displayMessage(String message)
     {
         System.out.println();
         System.out.println(message);
         System.out.println();
     }
 
-    public static void displayHomeScreen()
+    public void displayHomeScreen()
     {
         System.out.println();
         System.out.println("***************************************************");

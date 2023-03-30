@@ -12,7 +12,7 @@ public class UserInput
 {
     private static Scanner scanner = new Scanner(System.in);
 
-    public static String getHomeScreenOption()
+    public  String getHomeScreenOption()
     {
         System.out.println("What would you like to do?");
         System.out.println();
@@ -27,15 +27,15 @@ public class UserInput
         String selectedOption = scanner.nextLine();
         String option = selectedOption.trim().toLowerCase();
 
-        if (option.equals("D"))
+        if (option.equals("d"))
         {
             return "display";
         }
-        else if (option.equals("P"))
+        else if (option.equals("p"))
         {
             return "purchase";
         }
-        else if (option.equals("E"))
+        else if (option.equals("e"))
         {
             return "exit";
         }
