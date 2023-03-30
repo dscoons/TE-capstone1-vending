@@ -17,6 +17,10 @@ public class Item {
         this.type = type;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public String getName() {
         return name;
     }

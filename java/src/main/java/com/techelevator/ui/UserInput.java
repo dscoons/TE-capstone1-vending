@@ -77,5 +77,15 @@ public class UserInput
         BigDecimal money = new BigDecimal(moneyInput);
         return money;
     }
+
+    public String getItemToPurchase(){
+        System.out.print("Enter slot number of the item you would like to purchase: ");
+
+        String selectedOption = scanner.nextLine();
+        String option = selectedOption.trim().toLowerCase();
+        // if item doesn't exist inform user and return to pruchase menu
+        return option;
+        // if item is out of stock inform user and return to purchase menu
+    }
     
 }
