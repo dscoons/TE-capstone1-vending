@@ -1,6 +1,7 @@
 package com.techelevator.ui;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.Scanner;
 
 /**
@@ -46,5 +47,35 @@ public class UserInput
 
     }
 
+    public String getPurchaseOption(BigDecimal currentMoney) {
+        NumberFormat moneyFormatted = NumberFormat.getCurrencyInstance();
+        System.out.println("M) Feed Money");
+        System.out.println("S) Select Item");
+        System.out.println("F) Finish Transaction");
+        System.out.println();
+        System.out.println("Current Money Provided: " + moneyFormatted.format(currentMoney));
+        System.out.println();
+        System.out.print("Please select an option: ");
+
+        String selectedOption = scanner.nextLine();
+        String option = selectedOption.trim().toLowerCase();
+
+        if (option.equals("m")) {
+            return "feedmoney";
+        } else if (option.equals("s")) {
+            return "selectitem";
+        } else if (option.equals("f")) {
+            return "finish";
+        } else {
+            return "";
+        }
+    }
+
+    public BigDecimal getMoneyFed() {
+        System.out.print("How much to add? ");
+        String moneyInput = scanner.nextLine();
+        BigDecimal money = new BigDecimal(moneyInput);
+        return money;
+    }
     
 }

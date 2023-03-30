@@ -9,7 +9,7 @@ public class Item {
     private int quantity;
     private String type;
 
-    public Item(String name, String slot, BigDecimal price, String type) {
+    public Item(String slot, String name, BigDecimal price, String type) {
         this.name = name;
         this.slot = slot;
         this.price = price;
@@ -17,6 +17,37 @@ public class Item {
         this.type = type;
     }
 
+    public String getName() {
+        return name;
+    }
 
+    public String getSlot() {
+        return slot;
+    }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        if (type.equals("Drink")) {
+            return "Drinky, Drinky, Slurp Slurp!";
+        } else if (type.equals("Munchy")) {
+            return "Munchy, Munchy, so Good!";
+        } else if (type.equals("Candy")) {
+            return "Sugar, Sugar, so Sweet!";
+        } else if (type.equals("Gum")) {
+            return "Chewy, Chewy, Lots O Bubbles!";
+        }
+        // REPLACE THIS LATER
+        return "";
+    }
 }
