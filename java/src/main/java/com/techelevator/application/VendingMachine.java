@@ -14,6 +14,7 @@ public class VendingMachine {
     private UserInput userInput;
     private BigDecimal currentMoney = new BigDecimal("0");
     private List<Item> items = new ArrayList<>();
+    private int purchaseCounter = 0;
 
     public VendingMachine() {
         this.userInput = new UserInput();
@@ -28,7 +29,7 @@ public class VendingMachine {
 
             if (choice.equals("display")) {
                 // display the vending machine slots
-                userOutput.displayVendingItems(items);
+                userOutput.displayVendingItems(items, purchaseCounter);
             } else if (choice.equals("purchase")) {
                 // make a purchase
                 purchaseItem();
@@ -48,7 +49,7 @@ public class VendingMachine {
                 if (currentMoney.compareTo(new BigDecimal("0")) == 0) {
                     userOutput.displayMessage("\n*** Please add money first ***\n");
                 } else {
-                    userOutput.displayVendingItems(items);
+                    userOutput.displayVendingItems(items, purchaseCounter);
                     String itemToPurchase = userInput.getItemToPurchase();
                     boolean hasSlot = false;
                     boolean isInStock = true;
@@ -58,11 +59,16 @@ public class VendingMachine {
                             if (item.getQuantity() == 0) {
                                 isInStock = false;
                             }
+                            BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
+
                             hasSlot = true;
-                            if (currentMoney.compareTo(item.getPrice()) >= 0 && isInStock) {
-                                currentMoney = currentMoney.subtract(item.getPrice());
+                            if (currentMoney.compareTo(itemPrice) >= 0 && isInStock) {
+                                currentMoney = currentMoney.subtract(itemPrice);
                                 item.setQuantity(item.getQuantity() - 1);
-                            } else if (currentMoney.compareTo(item.getPrice()) == -1) {
+                                userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
+                                purchaseCounter++;
+
+                            } else if (currentMoney.compareTo(itemPrice) == -1) {
                                 userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
                             }
                             break;
@@ -79,6 +85,7 @@ public class VendingMachine {
                 ChangeCalculator changeCalculator = new ChangeCalculator(currentMoney, userOutput);
                 changeCalculator.calculateChange();
                 currentMoney = new BigDecimal(0);
+                purchaseCounter = 0;
                 break;
             }
         }

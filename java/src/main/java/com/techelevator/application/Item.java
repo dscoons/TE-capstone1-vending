@@ -1,6 +1,7 @@
 package com.techelevator.application;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 public class Item {
     private String name;
@@ -54,4 +55,45 @@ public class Item {
         // REPLACE THIS LATER
         return "";
     }
+
+    public BigDecimal getDiscountPrice(int purchaseCounter){
+
+        BigDecimal itemPrice = price;
+        if(purchaseCounter % 2 == 1){
+
+            itemPrice = itemPrice.subtract(new BigDecimal("1"));
+
+        }
+
+        return itemPrice;
+    }
+
+    public String getFormattedDiscountPrice(int purchaseCounter){
+
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
+        return numberFormat.format(this.getDiscountPrice(purchaseCounter));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

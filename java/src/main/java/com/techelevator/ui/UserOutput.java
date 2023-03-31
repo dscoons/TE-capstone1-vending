@@ -33,18 +33,40 @@ public class UserOutput
         System.out.println();
     }
 
-    public void displayVendingItems(List<Item> items) {
+    public void displayVendingItems(List<Item> items, int purchaseCounter) {
         // NEED TO SHOW WHEN ITEM IS OUT OF STOCK
         System.out.println("\n\n*** Current Vending Machine Options ***");
         for (Item item : items) {
-            NumberFormat formattedPrice = NumberFormat.getCurrencyInstance();
+
             String message = "";
             if (item.getQuantity() == 0) {
                 message = "(Out of Stock)";
             } else {
                 message = "(" + item.getQuantity() + " Available)";            }
-            System.out.printf("(%s) %-18s %-15s %8s\n", item.getSlot(), item.getName(), message, formattedPrice.format(item.getPrice()));
+            System.out.printf("(%s) %-18s %-15s %8s\n", item.getSlot(), item.getName(),
+                    message, item.getFormattedDiscountPrice(purchaseCounter));
         }
         System.out.println();
     }
+
+    public void displayConfirmation(Item item, BigDecimal currentMoney, int purchaseCounter){
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
+        System.out.println();
+        System.out.println(item.getDescription());
+        System.out.println("You purchased a " + item.getName() + " that costs " +
+                item.getFormattedDiscountPrice(purchaseCounter) + ". Your remaining balance is: " + numberFormat.format(currentMoney));
+        System.out.println();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }
