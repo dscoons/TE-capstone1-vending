@@ -88,10 +88,10 @@ public class VendingMachine {
 
         BigDecimal moneyFed = userInput.getMoneyFed();
         if (acceptedList.contains(moneyFed)) {
-            System.out.println("Yes, it contains a " + moneyFed);
+            userOutput.displayMessage("Yes, it contains a " + moneyFed);
             currentMoney = currentMoney.add(moneyFed);
         } else {
-            System.out.println("No, we don't accept that denomination.");
+            userOutput.displayMessage("No, we don't accept that denomination.");
         }
     }
 
@@ -102,7 +102,7 @@ public class VendingMachine {
                 String line = input.nextLine();
                 String[] itemProps = line.split(",");
                 // create new Object
-                System.out.println(itemProps[1]);
+                userOutput.displayMessage(itemProps[1]);
                 String slot = itemProps[0];
                 String name = itemProps[1];
                 BigDecimal price = new BigDecimal(itemProps[2]);
@@ -111,7 +111,7 @@ public class VendingMachine {
                 items.add(item);
             }
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            userOutput.displayMessage(e.getMessage());
         }
         ;
     }
