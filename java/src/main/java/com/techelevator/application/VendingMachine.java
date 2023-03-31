@@ -23,7 +23,7 @@ public class VendingMachine {
     }
 
     public void run() {
-        importInventoryFromFile("");
+        importInventoryFromFile();
         while (true) {
             userOutput.displayHomeScreen();
             String choice = userInput.getHomeScreenOption();
@@ -52,6 +52,9 @@ public class VendingMachine {
                 userOutput.displayMessage("Transaction Finished");
                 ChangeCalculator changeCalculator = new ChangeCalculator(currentMoney, userOutput);
                 changeCalculator.calculateChange();
+                String changeGiven = String.format("%-18s %6s %7s", "CHANGE GIVEN: ",
+                        formatPrice(currentMoney), formatPrice(new BigDecimal("0")));
+                log.write(changeGiven);
                 currentMoney = new BigDecimal(0);
                 purchaseCounter = 0;
                 break;
@@ -104,18 +107,23 @@ public class VendingMachine {
     }
 
     public void feedMoney() {
-        BigDecimal[] accepted = new BigDecimal[]{new BigDecimal("1"), new BigDecimal("5"), new BigDecimal("10"), new BigDecimal("20")};
+        BigDecimal[] accepted = new BigDecimal[]{new BigDecimal("1"), new BigDecimal("5"),
+                new BigDecimal("10"), new BigDecimal("20")};
         List<BigDecimal> acceptedList = Arrays.asList(accepted);
 
         BigDecimal moneyFed = userInput.getMoneyFed();
         if (acceptedList.contains(moneyFed)) {
             currentMoney = currentMoney.add(moneyFed);
+            String formattedLine = String.format("%-18s %6s %7s", "MONEY FED: ", formatPrice(moneyFed),
+                    formatPrice(currentMoney));
+
+            log.write(formattedLine);
         } else {
             userOutput.displayMessage("No, we don't accept that denomination.");
         }
     }
 
-    public void importInventoryFromFile(String path) {
+    public void importInventoryFromFile() {
         File inventoryFile = new File("catering.csv");
         try (Scanner input = new Scanner(inventoryFile)) {
             while (input.hasNextLine()) {
@@ -140,4 +148,11 @@ public class VendingMachine {
         return formattedPrice.format(price);
     }
 
+    public void setCurrentMoney(BigDecimal bigDecimal) {
+        this.currentMoney = bigDecimal;
+    }
+
+    public BigDecimal getCurrentMoney() {
+        return currentMoney;
+    }
 }
