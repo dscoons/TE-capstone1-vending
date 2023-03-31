@@ -52,7 +52,7 @@ public class UserOutput
     public void displayConfirmation(Item item, BigDecimal currentMoney, int purchaseCounter){
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
         System.out.println();
-        System.out.println(item.getDescription());
+        System.out.println("*** " + item.getDescription() + " ***");
         System.out.println("You purchased a " + item.getName() + " that costs " +
                 item.getFormattedDiscountPrice(purchaseCounter) + ". Your remaining balance is: " + numberFormat.format(currentMoney));
         System.out.println();

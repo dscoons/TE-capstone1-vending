@@ -1,12 +1,12 @@
 package com.techelevator.application;
 
+import com.techelevator.logger.Logger;
 import com.techelevator.ui.UserInput;
 import com.techelevator.ui.UserOutput;
-
-import javax.security.sasl.SaslClient;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class VendingMachine {
@@ -14,6 +14,7 @@ public class VendingMachine {
     private UserInput userInput;
     private BigDecimal currentMoney = new BigDecimal("0");
     private List<Item> items = new ArrayList<>();
+    private Logger log = new Logger();
     private int purchaseCounter = 0;
 
     public VendingMachine() {
@@ -46,40 +47,7 @@ public class VendingMachine {
             if (choice.equals("feedmoney")) {
                 feedMoney();
             } else if (choice.equals("selectitem")) {
-                if (currentMoney.compareTo(new BigDecimal("0")) == 0) {
-                    userOutput.displayMessage("\n*** Please add money first ***\n");
-                } else {
-                    userOutput.displayVendingItems(items, purchaseCounter);
-                    String itemToPurchase = userInput.getItemToPurchase();
-                    boolean hasSlot = false;
-                    boolean isInStock = true;
-
-                    for (Item item : items) {
-                        if (item.getSlot().equalsIgnoreCase(itemToPurchase)) {
-                            if (item.getQuantity() == 0) {
-                                isInStock = false;
-                            }
-                            BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
-
-                            hasSlot = true;
-                            if (currentMoney.compareTo(itemPrice) >= 0 && isInStock) {
-                                currentMoney = currentMoney.subtract(itemPrice);
-                                item.setQuantity(item.getQuantity() - 1);
-                                userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
-                                purchaseCounter++;
-
-                            } else if (currentMoney.compareTo(itemPrice) == -1) {
-                                userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
-                            }
-                            break;
-                        }
-                    }
-                    if (!hasSlot) {
-                        userOutput.displayMessage("Invalid Selection");
-                    } else if (!isInStock) {
-                        userOutput.displayMessage("Item is out of stock");
-                    }
-                }
+                makePurchase();
             } else if (choice.equals("finish")) {
                 userOutput.displayMessage("Transaction Finished");
                 ChangeCalculator changeCalculator = new ChangeCalculator(currentMoney, userOutput);
@@ -87,6 +55,50 @@ public class VendingMachine {
                 currentMoney = new BigDecimal(0);
                 purchaseCounter = 0;
                 break;
+            }
+        }
+    }
+
+    public void makePurchase() {
+        if (currentMoney.compareTo(new BigDecimal("0")) == 0) {
+            userOutput.displayMessage("\n*** Please add money first ***\n");
+        } else {
+            userOutput.displayVendingItems(items, purchaseCounter);
+            String itemToPurchase = userInput.getItemToPurchase();
+            boolean hasSlot = false;
+            boolean isInStock = true;
+
+            for (Item item : items) {
+                if (item.getSlot().equalsIgnoreCase(itemToPurchase)) {
+                    if (item.getQuantity() == 0) {
+                        isInStock = false;
+                    }
+                    BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
+
+                    hasSlot = true;
+                    if (currentMoney.compareTo(itemPrice) >= 0 && isInStock) {
+                        BigDecimal previousMoney = currentMoney;
+                        currentMoney = currentMoney.subtract(itemPrice);
+                        item.setQuantity(item.getQuantity() - 1);
+                        userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
+
+                        //log.writePurchase();
+                        // give currentMoney before AND after purchase
+                        String formattedLine = String.format("%-15s %s %6s %7s", item.getName(), item.getSlot(),
+                                formatPrice(previousMoney), formatPrice(currentMoney));
+                        log.write(formattedLine);
+                        purchaseCounter++;
+
+                    } else if (currentMoney.compareTo(itemPrice) == -1) {
+                        userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
+                    }
+                    break;
+                }
+            }
+            if (!hasSlot) {
+                userOutput.displayMessage("Invalid Selection");
+            } else if (!isInStock) {
+                userOutput.displayMessage("Item is out of stock");
             }
         }
     }
@@ -121,8 +133,11 @@ public class VendingMachine {
         } catch (FileNotFoundException e) {
             userOutput.displayMessage(e.getMessage());
         }
-        ;
     }
 
+    public String formatPrice(BigDecimal price) {
+        NumberFormat formattedPrice = NumberFormat.getCurrencyInstance();
+        return formattedPrice.format(price);
+    }
 
 }
