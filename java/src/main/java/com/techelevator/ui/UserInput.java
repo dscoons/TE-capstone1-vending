@@ -72,6 +72,7 @@ public class UserInput
     }
 
     public BigDecimal getMoneyFed() {
+        System.out.println();
         System.out.print("How much to add? ");
         String moneyInput = scanner.nextLine();
         BigDecimal money = new BigDecimal(moneyInput);

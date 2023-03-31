@@ -35,11 +35,16 @@ public class UserOutput
 
     public void displayVendingItems(List<Item> items) {
         // NEED TO SHOW WHEN ITEM IS OUT OF STOCK
+        System.out.println("\n\n*** Current Vending Machine Options ***");
         for (Item item : items) {
             NumberFormat formattedPrice = NumberFormat.getCurrencyInstance();
-            System.out.println("(" + item.getSlot() + ") " + item.getName() + " \t\t" + formattedPrice.format(item.getPrice()) +
-                    "\t\t Quantity remaining: " + item.getQuantity());
-
+            String message = "";
+            if (item.getQuantity() == 0) {
+                message = "(Out of Stock)";
+            } else {
+                message = "(" + item.getQuantity() + " Available)";            }
+            System.out.printf("(%s) %-18s %-15s %8s\n", item.getSlot(), item.getName(), message, formattedPrice.format(item.getPrice()));
         }
+        System.out.println();
     }
 }
