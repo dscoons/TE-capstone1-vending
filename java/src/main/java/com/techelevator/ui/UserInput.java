@@ -18,9 +18,9 @@ public class UserInput
         System.out.println("What would you like to do?");
         System.out.println();
 
-        System.out.println("D) Display Vending Machine Items");
-        System.out.println("P) Purchase");
-        System.out.println("E) Exit");
+        System.out.println("\u001B[36mD)\u001B[0m Display Vending Machine Items");
+        System.out.println("\u001B[36mP)\u001B[0m Purchase");
+        System.out.println("\u001B[36mE)\u001B[0m Exit");
 
         System.out.println();
         System.out.print("Please select an option: ");
@@ -49,9 +49,9 @@ public class UserInput
 
     public String getPurchaseOption(BigDecimal currentMoney) {
         NumberFormat moneyFormatted = NumberFormat.getCurrencyInstance();
-        System.out.println("M) Feed Money");
-        System.out.println("S) Select Item");
-        System.out.println("F) Finish Transaction");
+        System.out.println("\u001B[36mM)\u001B[0m Feed Money");
+        System.out.println("\u001B[36mS)\u001B[0m Select Item");
+        System.out.println("\u001B[36mF)\u001B[0m Finish Transaction");
         System.out.println();
         System.out.println("Current Money Provided: " + moneyFormatted.format(currentMoney));
         System.out.println();

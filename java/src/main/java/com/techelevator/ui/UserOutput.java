@@ -26,9 +26,9 @@ public class UserOutput
     public void displayHomeScreen()
     {
         System.out.println();
-        System.out.println("***************************************************");
-        System.out.println("                      Home");
-        System.out.println("***************************************************");
+        System.out.println("*****************************************************");
+        System.out.println("\u001B[36m    Welcome to Scott and Marco's Vending Machine!\u001B[0m");
+        System.out.println("*****************************************************");
         System.out.println();
     }
 

@@ -106,4 +106,41 @@ public class VendingMachineTest {
         String test = vendingMachine.formatPrice(new BigDecimal("-23"));
         Assert.assertEquals("-$23.00", test);
     }
+
+    @Test
+    public void slotExists_send_in_a1_returns_0(){
+        int slotNumber = vendingMachine.slotExists("a1");
+        Assert.assertEquals(0, slotNumber);
+    }
+
+    @Test
+    public void slotExists_(){
+        int slotNumber = vendingMachine.slotExists("x7");
+        Assert.assertEquals(-1, slotNumber);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

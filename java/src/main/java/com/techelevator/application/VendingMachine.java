@@ -41,6 +41,7 @@ public class VendingMachine {
                 purchaseItem();
             } else if (choice.equals("exit")) {
                 // good bye
+                userOutput.displayMessage("Thank you for using our vending machine!");
                 break;
             }
         }
@@ -85,24 +86,11 @@ public class VendingMachine {
         return -1;
     }
 
-    public boolean itemIsInStock(String slot) {
-        for (Item item : items) {
-            if (item.getSlot().equalsIgnoreCase(slot)) {
-                if (item.getQuantity() > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
-    }
-
     public void dispenseItem(String itemToPurchase) {
         int itemIndex = slotExists(itemToPurchase);
         if (itemIndex != -1) {
-            if (itemIsInStock(itemToPurchase)) {
-                Item item = items.get(itemIndex);
+            Item item = items.get(itemIndex);
+            if (item.isInStock()) {
                 processDispensedItem(item);
             } else {
                 userOutput.displayMessage("Item is out of stock, please select another item.");

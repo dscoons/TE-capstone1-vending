@@ -56,48 +56,22 @@ public class Item {
         } else if (type.equals("Gum")) {
             return "Chewy, Chewy, Lots O Bubbles!";
         }
-        // REPLACE THIS LATER
         return "";
     }
 
-    public BigDecimal getDiscountPrice(int purchaseCounter){
+    public BigDecimal getDiscountPrice(int purchaseCounter) {
 
         BigDecimal itemPrice = price;
-        if(purchaseCounter % 2 == 1){
-
+        if (purchaseCounter % 2 == 1) {
             itemPrice = itemPrice.subtract(new BigDecimal("1"));
-
         }
-
         return itemPrice;
     }
 
-    public String getFormattedDiscountPrice(int purchaseCounter){
-
+    public String getFormattedDiscountPrice(int purchaseCounter) {
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
         return numberFormat.format(this.getDiscountPrice(purchaseCounter));
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }
