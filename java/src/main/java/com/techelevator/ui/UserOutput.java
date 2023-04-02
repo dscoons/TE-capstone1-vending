@@ -1,11 +1,10 @@
 package com.techelevator.ui;
 
-import com.techelevator.application.Item;
+import com.techelevator.models.Item;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.List;
-import java.util.Map;
 
 
 /**

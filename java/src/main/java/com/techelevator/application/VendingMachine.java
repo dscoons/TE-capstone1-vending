@@ -1,6 +1,7 @@
 package com.techelevator.application;
 
 import com.techelevator.logger.Logger;
+import com.techelevator.models.Item;
 import com.techelevator.ui.UserInput;
 import com.techelevator.ui.UserOutput;
 import java.io.File;
@@ -17,13 +18,17 @@ public class VendingMachine {
     private Logger log = new Logger();
     private int purchaseCounter = 0;
 
+    public void setPurchaseCounter(int purchaseCounter) {
+        this.purchaseCounter = purchaseCounter;
+    }
+
     public VendingMachine() {
         this.userInput = new UserInput();
         this.userOutput = new UserOutput();
     }
 
     public void run() {
-        importInventoryFromFile();
+        importInventoryFromFile("catering.csv");
         while (true) {
             userOutput.displayHomeScreen();
             String choice = userInput.getHomeScreenOption();
@@ -45,9 +50,16 @@ public class VendingMachine {
         while (true) {
             String choice = userInput.getPurchaseOption(currentMoney);
             if (choice.equals("feedmoney")) {
-                feedMoney();
+                BigDecimal moneyFed = userInput.getMoneyFed();
+                feedMoney(moneyFed);
             } else if (choice.equals("selectitem")) {
-                makePurchase();
+                if (currentMoney.compareTo(new BigDecimal("0")) == 0) {
+                    userOutput.displayMessage("\n*** Please add money first ***\n");
+                } else {
+                    userOutput.displayVendingItems(items, purchaseCounter);
+                    String itemToPurchase = userInput.getItemToPurchase();
+                    dispenseItem(itemToPurchase);
+                }
             } else if (choice.equals("finish")) {
                 userOutput.displayMessage("Transaction Finished");
                 ChangeCalculator changeCalculator = new ChangeCalculator(currentMoney, userOutput);
@@ -62,75 +74,120 @@ public class VendingMachine {
         }
     }
 
-    public void makePurchase() {
-        if (currentMoney.compareTo(new BigDecimal("0")) == 0) {
-            userOutput.displayMessage("\n*** Please add money first ***\n");
-        } else {
-            userOutput.displayVendingItems(items, purchaseCounter);
-            String itemToPurchase = userInput.getItemToPurchase();
-            boolean hasSlot = false;
-            boolean isInStock = true;
+    public int slotExists(String slot) {
+        int index = 0;
+        for (Item item : items) {
+            if (item.getSlot().equalsIgnoreCase(slot)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
 
-            for (Item item : items) {
-                if (item.getSlot().equalsIgnoreCase(itemToPurchase)) {
-                    if (item.getQuantity() == 0) {
-                        isInStock = false;
-                    }
-                    BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
-
-                    hasSlot = true;
-                    if (currentMoney.compareTo(itemPrice) >= 0 && isInStock) {
-                        BigDecimal previousMoney = currentMoney;
-                        currentMoney = currentMoney.subtract(itemPrice);
-                        item.setQuantity(item.getQuantity() - 1);
-                        userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
-
-                        //log.writePurchase();
-                        // give currentMoney before AND after purchase
-                        String formattedLine = String.format("%-15s %s %6s %7s", item.getName(), item.getSlot(),
-                                formatPrice(previousMoney), formatPrice(currentMoney));
-                        log.write(formattedLine);
-                        purchaseCounter++;
-
-                    } else if (currentMoney.compareTo(itemPrice) == -1) {
-                        userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
-                    }
-                    break;
+    public boolean itemIsInStock(String slot) {
+        for (Item item : items) {
+            if (item.getSlot().equalsIgnoreCase(slot)) {
+                if (item.getQuantity() > 0) {
+                    return true;
+                } else {
+                    return false;
                 }
             }
-            if (!hasSlot) {
-                userOutput.displayMessage("Invalid Selection");
-            } else if (!isInStock) {
-                userOutput.displayMessage("Item is out of stock");
+        }
+        return false;
+    }
+
+    public void dispenseItem(String itemToPurchase) {
+        int itemIndex = slotExists(itemToPurchase);
+        if (itemIndex != -1) {
+            if (itemIsInStock(itemToPurchase)) {
+                Item item = items.get(itemIndex);
+                processDispensedItem(item);
+            } else {
+                userOutput.displayMessage("Item is out of stock, please select another item.");
             }
+        } else {
+            userOutput.displayMessage("Invalid Selection");
         }
     }
 
-    public void feedMoney() {
+    public void processDispensedItem(Item item) {
+        BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
+        if (currentMoney.compareTo(itemPrice) >= 0) {
+            BigDecimal previousMoney = currentMoney;
+            currentMoney = currentMoney.subtract(itemPrice);
+            item.setQuantity(item.getQuantity() - 1);
+            userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
+
+            String formattedLine = String.format("%-15s %s %6s %7s", item.getName(), item.getSlot(),
+                    formatPrice(previousMoney), formatPrice(currentMoney));
+            log.write(formattedLine);
+            purchaseCounter++;
+        } else if (currentMoney.compareTo(itemPrice) == -1) {
+            System.out.println(currentMoney);
+            System.out.println(itemPrice);
+            userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
+        }
+    }
+/*
+    public void dispenseItem(String itemToPurchase) {
+        boolean hasSlot = false;
+        boolean isInStock = true;
+
+        for (Item item : items) {
+            // find if the entered slot exists
+            if (item.getSlot().equalsIgnoreCase(itemToPurchase)) {
+                // test if in stock
+                isInStock = item.isInStock();
+                BigDecimal itemPrice = item.getDiscountPrice(purchaseCounter);
+
+                hasSlot = true;
+                if (currentMoney.compareTo(itemPrice) >= 0 && isInStock) {
+                    BigDecimal previousMoney = currentMoney;
+                    currentMoney = currentMoney.subtract(itemPrice);
+                    item.setQuantity(item.getQuantity() - 1);
+                    userOutput.displayConfirmation(item, currentMoney, purchaseCounter);
+
+                    String formattedLine = String.format("%-15s %s %6s %7s", item.getName(), item.getSlot(),
+                            formatPrice(previousMoney), formatPrice(currentMoney));
+                    log.write(formattedLine);
+                    purchaseCounter++;
+                } else if (currentMoney.compareTo(itemPrice) == -1) {
+                    System.out.println(currentMoney);
+                    System.out.println(itemPrice);
+                    userOutput.displayMessage("*** Not enough funds to purchase this item. ***");
+                }
+                break;
+            }
+        }
+        if (!hasSlot) {
+            userOutput.displayMessage("Invalid Selection");
+        } else if (!isInStock) {
+            userOutput.displayMessage("Item is out of stock, please select another item.");
+        }
+    }*/
+
+    public void feedMoney(BigDecimal moneyFed) {
         BigDecimal[] accepted = new BigDecimal[]{new BigDecimal("1"), new BigDecimal("5"),
                 new BigDecimal("10"), new BigDecimal("20")};
         List<BigDecimal> acceptedList = Arrays.asList(accepted);
-
-        BigDecimal moneyFed = userInput.getMoneyFed();
         if (acceptedList.contains(moneyFed)) {
             currentMoney = currentMoney.add(moneyFed);
             String formattedLine = String.format("%-18s %6s %7s", "MONEY FED: ", formatPrice(moneyFed),
                     formatPrice(currentMoney));
-
             log.write(formattedLine);
         } else {
             userOutput.displayMessage("No, we don't accept that denomination.");
         }
     }
 
-    public void importInventoryFromFile() {
-        File inventoryFile = new File("catering.csv");
+    public void importInventoryFromFile(String path) {
+        File inventoryFile = new File(path);
         try (Scanner input = new Scanner(inventoryFile)) {
             while (input.hasNextLine()) {
                 String line = input.nextLine();
                 String[] itemProps = line.split(",");
-                // create new Object
-                //userOutput.displayMessage(itemProps[1]);
                 String slot = itemProps[0];
                 String name = itemProps[1];
                 BigDecimal price = new BigDecimal(itemProps[2]);
@@ -154,5 +211,9 @@ public class VendingMachine {
 
     public BigDecimal getCurrentMoney() {
         return currentMoney;
+    }
+
+    public List<Item> getItems() {
+        return items;
     }
 }

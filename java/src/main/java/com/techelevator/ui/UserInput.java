@@ -73,8 +73,11 @@ public class UserInput
 
     public BigDecimal getMoneyFed() {
         System.out.println();
-        System.out.print("How much to add? ");
+        System.out.println("Bills accepted: $1, $5, $10, or $20.");
+        System.out.print("How much would you like to add? ");
         String moneyInput = scanner.nextLine();
+        System.out.println();
+        moneyInput = moneyInput.replace("$", "").trim();
         BigDecimal money = new BigDecimal(moneyInput);
         return money;
     }
