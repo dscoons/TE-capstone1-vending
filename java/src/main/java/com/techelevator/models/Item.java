@@ -1,4 +1,4 @@
-package com.techelevator.application;
+package com.techelevator.models;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -40,6 +40,10 @@ public class Item {
 
     public String getType() {
         return type;
+    }
+
+    public boolean isInStock() {
+        return (quantity > 0);
     }
 
     public String getDescription() {
